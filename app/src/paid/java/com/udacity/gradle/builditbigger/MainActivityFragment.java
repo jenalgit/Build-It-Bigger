@@ -18,6 +18,7 @@ import xyz.kushal.jokerlibrary.DisplayJokeActivity;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment implements JokeDownloadListener {
+    ProgressBar spinner;
 
     public MainActivityFragment() {
     }
@@ -27,11 +28,15 @@ public class MainActivityFragment extends Fragment implements JokeDownloadListen
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
 
+        spinner = (ProgressBar) root.findViewById(R.id.progressBar);
+        spinner.setVisibility(View.GONE);
+
         Button tellJokeButton = (Button) root.findViewById(R.id.tell_joke_button);
         tellJokeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AsyncJokeDownloader(MainActivityFragment.this).downloadJoke();
+                spinner.setVisibility(View.VISIBLE);
             }
         });
         return root;
@@ -39,6 +44,7 @@ public class MainActivityFragment extends Fragment implements JokeDownloadListen
 
     @Override
     public void downloadCompleted(String j) {
+        spinner.setVisibility(View.GONE);
         Intent mIntent = new Intent(getActivity(), DisplayJokeActivity.class);
         mIntent.putExtra("joke", j);
         startActivity(mIntent);
