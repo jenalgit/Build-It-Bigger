@@ -8,9 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.JokesTeller;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.udacity.gradle.utils.AsyncJokeDownloader;
+import com.udacity.gradle.utils.JokeDownloadListener;
 
 import xyz.kushal.jokerlibrary.DisplayJokeActivity;
 
@@ -18,7 +19,7 @@ import xyz.kushal.jokerlibrary.DisplayJokeActivity;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements JokeDownloadListener {
 
     public MainActivityFragment() {
     }
@@ -32,9 +33,7 @@ public class MainActivityFragment extends Fragment {
         tellJokeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), DisplayJokeActivity.class);
-                intent.putExtra("joke", JokesTeller.getJoke());
-                startActivity(intent);
+                new AsyncJokeDownloader(MainActivityFragment.this).downloadJoke();
             }
         });
 
@@ -47,5 +46,12 @@ public class MainActivityFragment extends Fragment {
                 .build();
         mAdView.loadAd(adRequest);
         return root;
+    }
+
+    @Override
+    public void downloadCompleted(String j) {
+        Intent mIntent = new Intent(getActivity(), DisplayJokeActivity.class);
+        mIntent.putExtra("joke", j);
+        startActivity(mIntent);
     }
 }
