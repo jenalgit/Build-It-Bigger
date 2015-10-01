@@ -36,35 +36,3 @@ dependencies {
     freeCompile 'com.google.android.gms:play-services-ads:7.8.0'
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
-
-task gceTestStart {
-    dependsOn = [":backend:appengineRun", "runAndroidTest", "gceTestEnd"]
-
-    evaluationDependsOn ":backend"
-
-    project(":backend") {
-        appengine {
-            daemon true
-        }
-    }
-
-    doLast {
-        println "GceTest is done"
-    }
-}
-
-/**
- * Android Unit test to run after local dev server start
- */
-task runAndroidTest {
-    dependsOn "connectedAndroidTest"
-    mustRunAfter ":backend:appengineRun"
-}
-
-/**
- * Task that shutdowns local dev server
- */
-task gceTestEnd {
-    dependsOn ":backend:appengineStop"
-    mustRunAfter "runAndroidTest"
-}

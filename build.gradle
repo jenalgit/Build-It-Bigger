@@ -17,3 +17,49 @@ allprojects {
         jcenter()
     }
 }
+
+task wrap {
+    dependsOn 'stopServer'
+
+    println 'Wrapping it up'
+
+    doLast {
+        println 'Your wrap is served matey'
+    }
+}
+
+task startServer {
+    dependsOn ':backend:appengineRun'
+
+    println 'Starting server'
+
+    doLast {
+        println 'Server started'
+    }
+}
+
+task doTests {
+    evaluationDependsOn ':backend'
+    dependsOn 'startServer'
+    dependsOn ':app:connectedAndroidTest'
+
+    doLast {
+        println 'Tests Done, Nice!'
+    }
+}
+
+task stopServer {
+    dependsOn = ['doTests', ':backend:appengineStop']
+
+    doLast {
+        println 'Server stopped'
+    }
+}
+
+
+project(':backend') {
+
+    appengine {
+        daemon true
+    }
+}
